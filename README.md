@@ -14,7 +14,16 @@
 
 This project aims to classify news articles into categories using **Deep Learning (Bidirectional LSTM)**.
 
-It processes raw text data (headline + description), cleans it, and predicts the most relevant category among multiple classes.
+It processes raw text data (headline + description), cleans it, and predicts the most relevant category among **42 classes**.
+
+---
+
+## 🗂️ Dataset
+
+* **News Category Dataset v3** (`News_Category_Dataset_v3.json`, HuffPost headlines)
+* **209,527 articles** loaded, **209,287** after cleaning
+* **42 imbalanced categories** (largest: POLITICS with 35,602 articles, ~17%)
+* Stratified **80 / 20 split**: 167,429 training articles, **41,858 test articles**
 
 ---
 
@@ -24,12 +33,14 @@ The model is built using:
 
 * **Embedding Layer (128 dimensions)**
 * **Bidirectional LSTM (64 units)**
-* **Fully Connected Dense Layers**
-* **Softmax Output Layer**
+* **Fully Connected Dense Layers** (64 → 32, with Dropout)
+* **Softmax Output Layer** (42 classes)
+
+Training: Adam (lr 0.001), batch size 128, up to 15 epochs, `class_weight='balanced'`, EarlyStopping (patience 5) and ReduceLROnPlateau (patience 2).
 
 ### 🔗 Pipeline
 
-Text → Cleaning → Tokenization → Padding → LSTM → Prediction
+Text → Cleaning (URLs, mentions, digits, punctuation, NLTK stopwords) → Keras Tokenizer (15,000 words) → Padding (26 tokens) → BiLSTM → Prediction
 
 ---
 
@@ -37,7 +48,7 @@ Text → Cleaning → Tokenization → Padding → LSTM → Prediction
 
 * Python 🐍
 * TensorFlow / Keras 🤖
-* Scikit-learn 📊
+* Scikit-learn 📊 (train/test split, class weights, metrics)
 * NLTK 🧹
 * Pandas & NumPy
 * Matplotlib & Seaborn 📈
@@ -60,13 +71,20 @@ Text → Cleaning → Tokenization → Padding → LSTM → Prediction
 
 ## 🚀 Results
 
-* 🎯 **Accuracy:** XX%
-* 🎯 **Top-3 Accuracy:** XX%
-* 📊 Multi-class classification (Top categories)
+Evaluated on **41,858 held-out test articles** (42 categories):
+
+| Metric | Value |
+|---|---|
+| 🎯 Top-1 accuracy | **45.4%** |
+| 🎯 Top-3 accuracy | **69.0%** |
+
+Baselines for context: random guess **2.4%** (1/42), always predicting the majority class (POLITICS) **~17%**.
+
+Several categories overlap (e.g. *ARTS* / *ARTS & CULTURE* / *CULTURE & ARTS*, *WORLDPOST* / *WORLD NEWS*), which is why top-3 accuracy is reported alongside top-1.
 
 ---
 
-## 🧪 Example Predictions
+## 🧪 Example Prediction (illustrative output format)
 
 ```bash
 Input:
@@ -83,15 +101,13 @@ Prediction:
 ## 📂 Project Structure
 
 ```
-📁 project/
-│── 📄 notebook.ipynb
-│── 📄 improved_news_classifier.h5
-│── 📄 improved_tokenizer.pkl
-│── 📄 improved_label_encoder.pkl
-│── 📄 confusion_matrix.png
-│── 📄 training_history.png
+📁 News-Classification-Project/
+│── 📄 News_Classification_Project.ipynb   # full pipeline (data → model → evaluation)
+│── 📄 requirements.txt
 │── 📄 README.md
 ```
+
+Files generated when the notebook runs (not versioned): `improved_news_classifier.h5`, `improved_tokenizer.pkl`, `improved_label_encoder.pkl`, `confusion_matrix.png`, `training_history.png`.
 
 ---
 
@@ -100,8 +116,8 @@ Prediction:
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/your-username/news-classification.git
-cd news-classification
+git clone https://github.com/BADIAMOHAMEDAYMANE/News-Classification-Project.git
+cd News-Classification-Project
 ```
 
 ### 2. Install dependencies
@@ -130,8 +146,8 @@ jupyter notebook
 ## 👨‍💻 Author
 
 **Mohamed Aymane Badia**
-🎓 Computer Science Student
-💻 Web & AI Developer
+🎓 5th-year AI & Data Science engineering student (EMSI)
+💻 Machine Learning & Web Developer
 
 ---
 
